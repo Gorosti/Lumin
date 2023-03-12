@@ -1303,7 +1303,7 @@ class MEM():
                                 ax1.set_xlabel('Exposure time')
                                 #ax1.set_ylim([0,0.6])
                                 ax1.set_xlim([0,max(t_ERC_monteCarlo[i])*1.1])
-                                ax1.hist(t_ERC_monteCarlo[i], bins = 20, edgecolor='black', weights=np.ones_like(t_ERC_monteCarlo[i]) / len(t_ERC_monteCarlo[i]))
+                                ax1.hist(t_ERC_monteCarlo[i], bins=20, edgecolor='black', weights=np.ones_like(t_ERC_monteCarlo[i]) / len(t_ERC_monteCarlo[i]))
             
                 MEAN_t_ERC.append(mean_t_ERC)
                 SD_t_ERC.append(sd_t_ERC)
