@@ -33,106 +33,63 @@ app.layout = html.Div(
             gutter=0,
             children=[
                 dmc.Col(
-                    span=6,
-                    xl=12,
+                    span=12,
+                    xl=6,
                     children=[
-                        dmc.Paper(
-                            p=8,
-                            m=4,
-                            withBorder=True,
+                        dmc.Col(
+                            span=12,
+                            xl=12,
                             children=[
-                                dmc.Grid(
-                                    align='stretch',
-                                    gutter='xs',
+                                dmc.Paper(
+                                    p=8,
+                                    m=4,
+                                    withBorder=True,
                                     children=[
-                                        dmc.Col(
-                                            span=12,
-                                            xl=6,
+                                        html.Div('Data Selection'),
+                                        dmc.Grid(
+                                            align='stretch',
+                                            gutter='xs',
                                             children=[
-                                                html.Div(
+                                                dmc.Col(
+                                                    span=12,
+                                                    xl=11,
                                                     children=[
-                                                        # Upload Button for the data file ###
-                                                        dcc.Upload(
-                                                            id='upload-data',
-                                                            children=html.Button('Select Files')
-                                                        ),
-                                                        html.Div(id='upload-text-output'),
-                                                        html.Br(),
-                                                        # Checklist for selecting the sheet names ###
-                                                        dcc.Checklist(id='sheet-checklist'),
-                                                        html.Br(),
-                                                        # Material selection ###
-                                                        dcc.Dropdown(
-                                                            id='material-dropdown',
-                                                            style=dict(display='none'),
-                                                            options={
-                                                                'F': 'Feldspar',
-                                                                'Q': 'Quartz'
-                                                            },
-                                                            value='F'
-                                                        ),
-                                                        html.Br(),
-                                                        # Table menu ###
-                                                        dash_table.DataTable(
-                                                            id='option-menu',
-                                                            editable=True
-                                                        ),
-                                                    ],
-                                                    style={
-                                                        'padding': 10,
-                                                        'flex': 1,
-                                                        "width": "100%"
-                                                    }
-                                                ),
-                                            ]
-                                        ),
-                                    ]
-                                ),
-                            ]
-                        ),
-                    ]
-                ),
-                dmc.Col(
-                    span=6,
-                    xl=12,
-                    children=[
-                        dmc.Paper(
-                            p=8,
-                            m=4,
-                            withBorder=True,
-                            children=[
-                                dmc.Grid(
-                                    align='stretch',
-                                    gutter='xs',
-                                    children=[
-                                        dmc.Col(
-                                            span=12,
-                                            xl=6,
-                                            children=[
-                                                html.Div(
-                                                    children=[
-                                                        dmc.Col(
-                                                            span=12,
-                                                            xl=6,
+                                                        html.Div(
                                                             children=[
-                                                                dcc.Loading(
-                                                                    id="loading-1",
-                                                                    children=[
-                                                                        dcc.Graph(
-                                                                            id='fit-graph',
-                                                                            style=dict(display='none')
-                                                                        )
-                                                                    ],
-                                                                    type="circle"
+                                                                # Upload Button for the data file ###
+                                                                dcc.Upload(
+                                                                    id='upload-data',
+                                                                    children=html.Button('Select Files')
                                                                 ),
-                                                            ]
+                                                                html.Div(id='upload-text-output'),
+                                                                html.Br(),
+                                                                # Checklist for selecting the sheet names ###
+                                                                dcc.Checklist(id='sheet-checklist'),
+                                                                html.Br(),
+                                                                # Material selection ###
+                                                                dcc.Dropdown(
+                                                                    id='material-dropdown',
+                                                                    style=dict(display='none'),
+                                                                    options={
+                                                                        'F': 'Feldspar',
+                                                                        'Q': 'Quartz'
+                                                                    },
+                                                                    value='F'
+                                                                ),
+                                                                html.Br(),
+                                                                # Table menu ###
+                                                                dash_table.DataTable(
+                                                                    id='option-menu',
+                                                                    editable=True
+                                                                ),
+                                                            ],
+                                                            style={
+                                                                'padding': 10,
+                                                                'flex': 1,
+                                                                "width": "100%"
+                                                            }
                                                         ),
-                                                    ],
-                                                    style={
-                                                        'padding': 10,
-                                                        'flex': 1,
-                                                        "width": "100%"
-                                                    }
+                                                    ]
                                                 ),
                                             ]
                                         ),
@@ -140,50 +97,50 @@ app.layout = html.Div(
                                 ),
                             ]
                         ),
-                    ]
-                ),
-                dmc.Col(
-                    span=6,
-                    xl=12,
-                    children=[
-                        dmc.Paper(
-                            p=8,
-                            m=4,
-                            withBorder=True,
+                        dmc.Col(
+                            span=12,
+                            xl=12,
                             children=[
-                                dmc.Grid(
-                                    align='stretch',
-                                    gutter='xs',
+                                dmc.Paper(
+                                    p=8,
+                                    m=4,
+                                    withBorder=True,
                                     children=[
-                                        dmc.Col(
-                                            span=12,
-                                            xl=6,
+                                        html.Div('Fitted Profiles'),
+                                        dmc.Grid(
+                                            align='stretch',
+                                            gutter='xs',
                                             children=[
-                                                html.Div(
+                                                dmc.Col(
+                                                    span=12,
+                                                    xl=6,
                                                     children=[
-                                                        dmc.Col(
-                                                            span=12,
-                                                            xl=6,
+                                                        html.Div(
                                                             children=[
-                                                                dcc.Loading(
-                                                                    id="loading-1",
+                                                                dmc.Col(
+                                                                    span=12,
+                                                                    xl=6,
                                                                     children=[
-                                                                        dcc.Graph(
-                                                                            id='ERC-graph',
-                                                                            style=dict(display='none')
+                                                                        dcc.Loading(
+                                                                            id="loading-1",
+                                                                            children=[
+                                                                                dcc.Graph(
+                                                                                    id='fit-graph',
+                                                                                    style=dict(display='none')
+                                                                                )
+                                                                            ],
+                                                                            type="circle"
                                                                         ),
-                                                                    ],
-                                                                    type="circle"
+                                                                    ]
                                                                 ),
-                                                            ]
+                                                            ],
+                                                            style={
+                                                                'padding': 10,
+                                                                'flex': 1,
+                                                                "width": "100%"
+                                                            }
                                                         ),
-                                                    ],
-                                                    style={
-                                                        'padding': 10,
-                                                        'flex': 1,
-                                                        "width": "100%",
-                                                        'backgroundColor': 'white'
-                                                    }
+                                                    ]
                                                 ),
                                             ]
                                         ),
@@ -197,179 +154,238 @@ app.layout = html.Div(
                     span=12,
                     xl=6,
                     children=[
-                        dmc.Paper(
-                            p=8,
-                            m=4,
-                            withBorder=True,
+                        dmc.Col(
+                            span=12,
+                            xl=12,
                             children=[
-                                dmc.Grid(
-                                    align='stretch',
-                                    gutter='xs',
+                                dmc.Paper(
+                                    p=8,
+                                    m=4,
+                                    withBorder=True,
                                     children=[
-                                        dmc.Col(
-                                            span=12,
-                                            xl=6,
+                                        html.Div('Initial Guess'),
+                                        dmc.Grid(
+                                            align='stretch',
+                                            gutter='xs',
                                             children=[
-                                                html.Div(
+                                                dmc.Col(
+                                                    span=12,
+                                                    xl=6,
                                                     children=[
                                                         html.Div(
-                                                            id='radio-container',
-                                                            children=[
-                                                                dcc.RadioItems(
-                                                                    id='radio-guess',
-                                                                    inline=True
-                                                                ),
-                                                                html.Br(),
-                                                                html.Div(
-                                                                    children=[
-                                                                        html.Div(
-                                                                            id='order-container',
-                                                                            children=[
-                                                                                html.I("Order of the Model"),
-                                                                                html.Br(),
-                                                                                dcc.Input(
-                                                                                    id="input-order",
-                                                                                    type="number",
-                                                                                    value=2.1,
-                                                                                    min=1,
-                                                                                    max=10,
-                                                                                    placeholder="",
-                                                                                    style={'marginRight': '10px'}
-                                                                                ),
-                                                                            ],
-                                                                        ),
-                                                                        html.Div(
-                                                                            id='mu-container',
-                                                                            children=[
-                                                                                html.I("Mu"),
-                                                                                html.Br(),
-                                                                                dcc.Input(
-                                                                                    id="input-mu",
-                                                                                    type="number",
-                                                                                    value=1.38,
-                                                                                    min=1e-6,
-                                                                                    max=1e6,
-                                                                                    placeholder="",
-                                                                                    style={'marginRight': '10px'}
-                                                                                ),
-                                                                            ],
-                                                                        ),
-                                                                    ],
-                                                                    style={
-                                                                        'display': 'flex',
-                                                                        'flex-direction': 'row'
-                                                                    }
-                                                                ),
-                                                            ],
-                                                            style={'display': 'none'}
-                                                        ),
-                                                        html.Div(
                                                             children=[
                                                                 html.Div(
-                                                                    id='k1_slider-container',
+                                                                    id='radio-container',
                                                                     children=[
-                                                                        dcc.Slider(
-                                                                            id='k1_slider',
-                                                                            marks={
-                                                                                0: {'label': '0'},
-                                                                                0.99: {'label': 'K1'}
-                                                                            },
-                                                                            tooltip={"placement": "right"},
-                                                                            min=0,
-                                                                            max=0.99,
-                                                                            value=0.5,
-                                                                            included=False,
-                                                                            vertical=True
+                                                                        dcc.RadioItems(
+                                                                            id='radio-guess',
+                                                                            inline=True
                                                                         ),
-                                                                    ],
-                                                                    style={'display': 'none'}),
-                                                                html.Div(
-                                                                    id='k2_slider-container',
-                                                                    children=[
-                                                                        dcc.Slider(
-                                                                            id='k2_slider',
-                                                                            marks={
-                                                                                0: {'label': '0'},
-                                                                                0.99: {'label': 'K2'}
-                                                                            },
-                                                                            tooltip={"placement": "right"},
-                                                                            min=0,
-                                                                            max=0.99,
-                                                                            value=0.1,
-                                                                            included=False,
-                                                                            vertical=True
+                                                                        html.Br(),
+                                                                        html.Div(
+                                                                            children=[
+                                                                                html.Div(
+                                                                                    id='order-container',
+                                                                                    children=[
+                                                                                        html.I("Order of the Model"),
+                                                                                        html.Br(),
+                                                                                        dcc.Input(
+                                                                                            id="input-order",
+                                                                                            type="number",
+                                                                                            value=2.1,
+                                                                                            min=1,
+                                                                                            max=10,
+                                                                                            placeholder="",
+                                                                                            style={'marginRight': '10px'}
+                                                                                        ),
+                                                                                    ],
+                                                                                ),
+                                                                                html.Div(
+                                                                                    id='mu-container',
+                                                                                    children=[
+                                                                                        html.I("Mu"),
+                                                                                        html.Br(),
+                                                                                        dcc.Input(
+                                                                                            id="input-mu",
+                                                                                            type="number",
+                                                                                            value=1.38,
+                                                                                            min=1e-6,
+                                                                                            max=1e6,
+                                                                                            placeholder="",
+                                                                                            style={'marginRight': '10px'}
+                                                                                        ),
+                                                                                    ],
+                                                                                ),
+                                                                            ],
+                                                                            style={
+                                                                                'display': 'flex',
+                                                                                'flex-direction': 'row'
+                                                                            }
                                                                         ),
                                                                     ],
                                                                     style={'display': 'none'}
                                                                 ),
-                                                                dcc.Graph(
-                                                                    id='guess-graph',
-                                                                    style=dict(display='none')
+                                                                html.Div(
+                                                                    children=[
+                                                                        html.Div(
+                                                                            id='k1_slider-container',
+                                                                            children=[
+                                                                                dcc.Slider(
+                                                                                    id='k1_slider',
+                                                                                    marks={
+                                                                                        0: {'label': '0'},
+                                                                                        0.99: {'label': 'K1'}
+                                                                                    },
+                                                                                    tooltip={"placement": "right"},
+                                                                                    min=0,
+                                                                                    max=0.99,
+                                                                                    value=0.5,
+                                                                                    included=False,
+                                                                                    vertical=True
+                                                                                ),
+                                                                            ],
+                                                                            style={'display': 'none'}),
+                                                                        html.Div(
+                                                                            id='k2_slider-container',
+                                                                            children=[
+                                                                                dcc.Slider(
+                                                                                    id='k2_slider',
+                                                                                    marks={
+                                                                                        0: {'label': '0'},
+                                                                                        0.99: {'label': 'K2'}
+                                                                                    },
+                                                                                    tooltip={"placement": "right"},
+                                                                                    min=0,
+                                                                                    max=0.99,
+                                                                                    value=0.1,
+                                                                                    included=False,
+                                                                                    vertical=True
+                                                                                ),
+                                                                            ],
+                                                                            style={'display': 'none'}
+                                                                        ),
+                                                                        dcc.Graph(
+                                                                            id='guess-graph',
+                                                                            style=dict(display='none')
+                                                                        ),
+                                                                    ],
+                                                                    style={'display': 'flex', 'flex-direction': 'row'}
+                                                                ),
+                                                                # Create Div to place a conditionally visible element inside
+                                                                html.Div(
+                                                                    id='x1_slider-container',
+                                                                    children=[
+                                                                        dcc.Slider(
+                                                                            id='x1_slider',
+                                                                            min=0,
+                                                                            max=100,
+                                                                            value=65,
+                                                                            tooltip={"placement": "right"},
+                                                                            included=False
+                                                                        ),
+                                                                    ],
+                                                                    style={'display': 'none'}
+                                                                ),
+                                                                html.Div(
+                                                                    id='x2_slider-container',
+                                                                    children=[
+                                                                        dcc.Slider(
+                                                                            id='x2_slider',
+                                                                            min=0,
+                                                                            max=100,
+                                                                            value=0,
+                                                                            tooltip={"placement": "right"},
+                                                                            included=False
+                                                                        ),
+                                                                    ],
+                                                                    style={'display': 'none'}
+                                                                ),
+                                                                html.Div(
+                                                                    id='x3_slider-container',
+                                                                    children=[
+                                                                        dcc.Slider(
+                                                                            id='x3_slider',
+                                                                            min=0,
+                                                                            max=100,
+                                                                            value=0,
+                                                                            tooltip={"placement": "right"},
+                                                                            included=False
+                                                                        ),
+                                                                    ],
+                                                                    style={'display': 'none'}
+                                                                ),
+                                                                html.Div(
+                                                                    id='table-container',
+                                                                    children=[
+                                                                        dash_table.DataTable(
+                                                                            id='guess-modified',
+                                                                            data=None,
+                                                                            columns=None
+                                                                        ),
+                                                                    ],
+                                                                    style={'display': 'none'}
                                                                 ),
                                                             ],
-                                                            style={'display': 'flex', 'flex-direction': 'row'}
+                                                            style={
+                                                                'padding': 10,
+                                                                'flex': 1,
+                                                                "width": "100%",
+                                                                'backgroundColor': 'white'
+                                                            }
                                                         ),
-                                                        # Create Div to place a conditionally visible element inside
+                                                    ]
+                                                ),
+                                            ]
+                                        ),
+                                    ]
+                                ),
+                            ]
+                        ),
+                        dmc.Col(
+                            span=12,
+                            xl=12,
+                            children=[
+                                dmc.Paper(
+                                    p=8,
+                                    m=4,
+                                    withBorder=True,
+                                    children=[
+                                        html.Div('ERC Graph'),
+                                        dmc.Grid(
+                                            align='stretch',
+                                            gutter='xs',
+                                            children=[
+                                                dmc.Col(
+                                                    span=12,
+                                                    xl=6,
+                                                    children=[
                                                         html.Div(
-                                                            id='x1_slider-container',
                                                             children=[
-                                                                dcc.Slider(
-                                                                    id='x1_slider',
-                                                                    min=0,
-                                                                    max=100,
-                                                                    value=65,
-                                                                    tooltip={"placement": "right"},
-                                                                    included=False
+                                                                dmc.Col(
+                                                                    span=12,
+                                                                    xl=6,
+                                                                    children=[
+                                                                        dcc.Loading(
+                                                                            id="loading-1",
+                                                                            children=[
+                                                                                dcc.Graph(
+                                                                                    id='ERC-graph',
+                                                                                    style=dict(display='none')
+                                                                                ),
+                                                                            ],
+                                                                            type="circle"
+                                                                        ),
+                                                                    ]
                                                                 ),
                                                             ],
-                                                            style={'display': 'none'}
+                                                            style={
+                                                                'padding': 10,
+                                                                'flex': 1,
+                                                                "width": "100%",
+                                                                'backgroundColor': 'white'
+                                                            }
                                                         ),
-                                                        html.Div(
-                                                            id='x2_slider-container',
-                                                            children=[
-                                                                dcc.Slider(
-                                                                    id='x2_slider',
-                                                                    min=0,
-                                                                    max=100,
-                                                                    value=0,
-                                                                    tooltip={"placement": "right"},
-                                                                    included=False
-                                                                ),
-                                                            ],
-                                                            style={'display': 'none'}
-                                                        ),
-                                                        html.Div(
-                                                            id='x3_slider-container',
-                                                            children=[
-                                                                dcc.Slider(
-                                                                    id='x3_slider',
-                                                                    min=0,
-                                                                    max=100,
-                                                                    value=0,
-                                                                    tooltip={"placement": "right"},
-                                                                    included=False
-                                                                ),
-                                                            ],
-                                                            style={'display': 'none'}
-                                                        ),
-                                                        html.Div(
-                                                            id='table-container',
-                                                            children=[
-                                                                dash_table.DataTable(
-                                                                    id='guess-modified',
-                                                                    data=None,
-                                                                    columns=None
-                                                                ),
-                                                            ],
-                                                            style={'display': 'none'}
-                                                        ),
-                                                    ],
-                                                    style={
-                                                        'padding': 10,
-                                                        'flex': 1,
-                                                        "width": "100%",
-                                                        'backgroundColor': 'white'
-                                                    }
+                                                    ]
                                                 ),
                                             ]
                                         ),
