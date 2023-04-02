@@ -3,6 +3,7 @@ import io
 import dash
 from dash.dependencies import Input, Output, State
 import dash_mantine_components as dmc
+import dash_bootstrap_components as dbc
 from dash import dcc, html, dash_table
 from dash.dash_table.Format import Format, Scheme, Symbol
 import plotly.graph_objs as go
@@ -15,16 +16,23 @@ import gc
 # Import the AgeDating Class
 from MEM import MEM
 
+# Import the hover information data
+from info_hover import create_title_with_info_hover, info_texts
+
 # #-----------------------------------------------#
 # #            Initialize the Dash App            #
 # #-----------------------------------------------#  
 
-app = dash.Dash(__name__)
+app = dash.Dash(
+    __name__,
+    external_stylesheets=[dbc.themes.BOOTSTRAP, dbc.icons.BOOTSTRAP]
+)
 server = app.server
+
 
 # #-----------------------------------------------#
 # #               Define the Layout               #
-# #-----------------------------------------------#  
+# #-----------------------------------------------#
 
 app.layout = html.Div(
     children=[
@@ -45,7 +53,7 @@ app.layout = html.Div(
                                     m=4,
                                     withBorder=True,
                                     children=[
-                                        html.Div('Data Selection'),
+                                        create_title_with_info_hover('Select Data', info_texts),
                                         dmc.Grid(
                                             align='stretch',
                                             gutter='xs',
@@ -106,7 +114,7 @@ app.layout = html.Div(
                                     m=4,
                                     withBorder=True,
                                     children=[
-                                        html.Div('Fitted Profiles'),
+                                        create_title_with_info_hover('Fitted Profiles', info_texts),
                                         dmc.Grid(
                                             align='stretch',
                                             gutter='xs',
@@ -163,7 +171,7 @@ app.layout = html.Div(
                                     m=4,
                                     withBorder=True,
                                     children=[
-                                        html.Div('Initial Guess'),
+                                        create_title_with_info_hover('Initial Guess', info_texts),
                                         dmc.Grid(
                                             align='stretch',
                                             gutter='xs',
@@ -196,7 +204,8 @@ app.layout = html.Div(
                                                                                             min=1,
                                                                                             max=10,
                                                                                             placeholder="",
-                                                                                            style={'marginRight': '10px'}
+                                                                                            style={
+                                                                                                'marginRight': '10px'}
                                                                                         ),
                                                                                     ],
                                                                                 ),
@@ -212,7 +221,8 @@ app.layout = html.Div(
                                                                                             min=1e-6,
                                                                                             max=1e6,
                                                                                             placeholder="",
-                                                                                            style={'marginRight': '10px'}
+                                                                                            style={
+                                                                                                'marginRight': '10px'}
                                                                                         ),
                                                                                     ],
                                                                                 ),
@@ -271,7 +281,6 @@ app.layout = html.Div(
                                                                     ],
                                                                     style={'display': 'flex', 'flex-direction': 'row'}
                                                                 ),
-                                                                # Create Div to place a conditionally visible element inside
                                                                 html.Div(
                                                                     id='x1_slider-container',
                                                                     children=[
@@ -350,7 +359,7 @@ app.layout = html.Div(
                                     m=4,
                                     withBorder=True,
                                     children=[
-                                        html.Div('ERC Graph'),
+                                        create_title_with_info_hover('ERC Graph', info_texts),
                                         dmc.Grid(
                                             align='stretch',
                                             gutter='xs',
@@ -1139,4 +1148,3 @@ def create_mem(rows_guess, rows_menu, columns_guess, columns_menu,
 
 if __name__ == '__main__':
     app.run_server(debug=True)
-
