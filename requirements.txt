@@ -7,4 +7,4 @@ pip
 scipy
 uncertainties
 gunicorn
-openpyxel
+openpyxl
