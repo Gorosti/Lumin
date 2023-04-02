@@ -121,7 +121,7 @@ app.layout = html.Div(
                                             children=[
                                                 dmc.Col(
                                                     span=12,
-                                                    xl=6,
+                                                    xl=11,
                                                     children=[
                                                         html.Div(
                                                             children=[
@@ -178,7 +178,7 @@ app.layout = html.Div(
                                             children=[
                                                 dmc.Col(
                                                     span=12,
-                                                    xl=6,
+                                                    xl=11,
                                                     children=[
                                                         html.Div(
                                                             children=[
@@ -366,7 +366,7 @@ app.layout = html.Div(
                                             children=[
                                                 dmc.Col(
                                                     span=12,
-                                                    xl=6,
+                                                    xl=11,
                                                     children=[
                                                         html.Div(
                                                             children=[
@@ -963,8 +963,8 @@ def create_guess_fig(rows_guess, columns_guess, rows_menu,
         layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)',
                            plot_bgcolor='rgba(0,0,0,0)',
                            title="Initial Guess",
-                           height=500,
-                           width=500)
+                           height=700,
+                           width=700)
 
         fig = go.Figure(data=plot_content,
                         layout=layout)
@@ -1142,6 +1142,9 @@ def create_mem(rows_guess, rows_menu, columns_guess, columns_menu,
         figure_erc = fig_erc
 
         gc.collect()
+
+        fig_fit.update_layout(height=700, width=700)
+        figure_erc.update_layout(height=700, width=700)
 
     return fig_fit, graph_style_fit, figure_erc, graph_style_erc
 
