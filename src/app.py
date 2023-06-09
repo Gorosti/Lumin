@@ -416,7 +416,7 @@ app.layout = html.Div(
                                                             xl=12,
                                                             children=[
                                                                 dcc.Loading(
-                                                                    id="loading-1",
+                                                                    id="loading-2",
                                                                     children=[
                                                                         dcc.Graph(
                                                                             id='ERC-graph',
