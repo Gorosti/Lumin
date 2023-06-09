@@ -2,6 +2,8 @@ import base64
 import io
 import dash
 from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
+from dash import callback_context, no_update
 import dash_mantine_components as dmc
 import dash_bootstrap_components as dbc
 from dash import dcc, html, dash_table
@@ -29,7 +31,6 @@ app = dash.Dash(
 )
 server = app.server
 
-
 # #-----------------------------------------------#
 # #               Define the Layout               #
 # #-----------------------------------------------#
@@ -42,359 +43,59 @@ app.layout = html.Div(
             children=[
                 dmc.Col(
                     span=12,
-                    xl=6,
+                    xl=12,
                     children=[
-                        dmc.Col(
-                            span=12,
-                            xl=12,
+                        dmc.Paper(
+                            p=8,
+                            m=4,
+                            withBorder=True,
                             children=[
-                                dmc.Paper(
-                                    p=8,
-                                    m=4,
-                                    withBorder=True,
+                                create_title_with_info_hover('Select Data', info_texts),
+                                dmc.Grid(
+                                    align='stretch',
+                                    gutter='xs',
                                     children=[
-                                        create_title_with_info_hover('Select Data', info_texts),
-                                        dmc.Grid(
-                                            align='stretch',
-                                            gutter='xs',
+                                        dmc.Col(
+                                            span=12,
+                                            xl=11,
                                             children=[
-                                                dmc.Col(
-                                                    span=12,
-                                                    xl=11,
+                                                html.Div(
                                                     children=[
-                                                        html.Div(
-                                                            children=[
-                                                                # Upload Button for the data file ###
-                                                                dcc.Upload(
-                                                                    id='upload-data',
-                                                                    children=html.Button('Select Files')
-                                                                ),
-                                                                html.Div(id='upload-text-output'),
-                                                                html.Br(),
-                                                                # Checklist for selecting the sheet names ###
-                                                                dcc.Checklist(id='sheet-checklist'),
-                                                                html.Br(),
-                                                                # Material selection ###
-                                                                dcc.Dropdown(
-                                                                    id='material-dropdown',
-                                                                    style=dict(display='none'),
-                                                                    options={
-                                                                        'F': 'Feldspar',
-                                                                        'Q': 'Quartz'
-                                                                    },
-                                                                    value='F'
-                                                                ),
-                                                                html.Br(),
-                                                                # Table menu ###
-                                                                dash_table.DataTable(
-                                                                    id='option-menu',
-                                                                    editable=True
-                                                                ),
-                                                            ],
-                                                            style={
-                                                                'padding': 10,
-                                                                'flex': 1,
-                                                                "width": "100%"
-                                                            }
+                                                        # Upload Button for the data file ###
+                                                        dcc.Upload(
+                                                            id='upload-data',
+                                                            children=html.Button('Select Files')
                                                         ),
-                                                    ]
-                                                ),
-                                            ]
-                                        ),
-                                    ]
-                                ),
-                            ]
-                        ),
-                        dmc.Col(
-                            span=12,
-                            xl=12,
-                            children=[
-                                dmc.Paper(
-                                    p=8,
-                                    m=4,
-                                    withBorder=True,
-                                    children=[
-                                        create_title_with_info_hover('Fitted Profiles', info_texts),
-                                        dmc.Grid(
-                                            align='stretch',
-                                            gutter='xs',
-                                            children=[
-                                                dmc.Col(
-                                                    span=12,
-                                                    xl=11,
-                                                    children=[
-                                                        html.Div(
-                                                            children=[
-                                                                dmc.Col(
-                                                                    span=12,
-                                                                    xl=6,
-                                                                    children=[
-                                                                        dcc.Loading(
-                                                                            id="loading-1",
-                                                                            children=[
-                                                                                dcc.Graph(
-                                                                                    id='fit-graph',
-                                                                                    style=dict(display='none')
-                                                                                )
-                                                                            ],
-                                                                            type="circle"
-                                                                        ),
-                                                                    ]
-                                                                ),
-                                                            ],
-                                                            style={
-                                                                'padding': 10,
-                                                                'flex': 1,
-                                                                "width": "100%"
-                                                            }
+                                                        html.Div(id='upload-text-output'),
+                                                        html.Br(),
+                                                        # Checklist for selecting the sheet names ###
+                                                        dcc.Checklist(id='sheet-checklist'),
+                                                        html.Br(),
+                                                        # Material selection ###
+                                                        dcc.Dropdown(
+                                                            id='material-dropdown',
+                                                            style=dict(display='none'),
+                                                            options={
+                                                                'F': 'Feldspar',
+                                                                'Q': 'Quartz'
+                                                            },
+                                                            value='F'
                                                         ),
-                                                    ]
-                                                ),
-                                            ]
-                                        ),
-                                    ]
-                                ),
-                            ]
-                        ),
-                    ]
-                ),
-                dmc.Col(
-                    span=12,
-                    xl=6,
-                    children=[
-                        dmc.Col(
-                            span=12,
-                            xl=12,
-                            children=[
-                                dmc.Paper(
-                                    p=8,
-                                    m=4,
-                                    withBorder=True,
-                                    children=[
-                                        create_title_with_info_hover('Initial Guess', info_texts),
-                                        dmc.Grid(
-                                            align='stretch',
-                                            gutter='xs',
-                                            children=[
-                                                dmc.Col(
-                                                    span=12,
-                                                    xl=11,
-                                                    children=[
-                                                        html.Div(
-                                                            children=[
-                                                                html.Div(
-                                                                    id='radio-container',
-                                                                    children=[
-                                                                        dcc.RadioItems(
-                                                                            id='radio-guess',
-                                                                            inline=True
-                                                                        ),
-                                                                        html.Br(),
-                                                                        html.Div(
-                                                                            children=[
-                                                                                html.Div(
-                                                                                    id='order-container',
-                                                                                    children=[
-                                                                                        html.I("Order of the Model"),
-                                                                                        html.Br(),
-                                                                                        dcc.Input(
-                                                                                            id="input-order",
-                                                                                            type="number",
-                                                                                            value=2.1,
-                                                                                            min=1,
-                                                                                            max=10,
-                                                                                            placeholder="",
-                                                                                            style={
-                                                                                                'marginRight': '10px'}
-                                                                                        ),
-                                                                                    ],
-                                                                                ),
-                                                                                html.Div(
-                                                                                    id='mu-container',
-                                                                                    children=[
-                                                                                        html.I("Mu"),
-                                                                                        html.Br(),
-                                                                                        dcc.Input(
-                                                                                            id="input-mu",
-                                                                                            type="number",
-                                                                                            value=1.38,
-                                                                                            min=1e-6,
-                                                                                            max=1e6,
-                                                                                            placeholder="",
-                                                                                            style={
-                                                                                                'marginRight': '10px'}
-                                                                                        ),
-                                                                                    ],
-                                                                                ),
-                                                                            ],
-                                                                            style={
-                                                                                'display': 'flex',
-                                                                                'flex-direction': 'row'
-                                                                            }
-                                                                        ),
-                                                                    ],
-                                                                    style={'display': 'none'}
-                                                                ),
-                                                                html.Div(
-                                                                    children=[
-                                                                        html.Div(
-                                                                            id='k1_slider-container',
-                                                                            children=[
-                                                                                dcc.Slider(
-                                                                                    id='k1_slider',
-                                                                                    marks={
-                                                                                        0: {'label': '0'},
-                                                                                        0.99: {'label': 'K1'}
-                                                                                    },
-                                                                                    tooltip={"placement": "right"},
-                                                                                    min=0,
-                                                                                    max=0.99,
-                                                                                    value=0.5,
-                                                                                    included=False,
-                                                                                    vertical=True
-                                                                                ),
-                                                                            ],
-                                                                            style={'display': 'none'}),
-                                                                        html.Div(
-                                                                            id='k2_slider-container',
-                                                                            children=[
-                                                                                dcc.Slider(
-                                                                                    id='k2_slider',
-                                                                                    marks={
-                                                                                        0: {'label': '0'},
-                                                                                        0.99: {'label': 'K2'}
-                                                                                    },
-                                                                                    tooltip={"placement": "right"},
-                                                                                    min=0,
-                                                                                    max=0.99,
-                                                                                    value=0.1,
-                                                                                    included=False,
-                                                                                    vertical=True
-                                                                                ),
-                                                                            ],
-                                                                            style={'display': 'none'}
-                                                                        ),
-                                                                        dcc.Graph(
-                                                                            id='guess-graph',
-                                                                            style=dict(display='none')
-                                                                        ),
-                                                                    ],
-                                                                    style={'display': 'flex', 'flex-direction': 'row'}
-                                                                ),
-                                                                html.Div(
-                                                                    id='x1_slider-container',
-                                                                    children=[
-                                                                        dcc.Slider(
-                                                                            id='x1_slider',
-                                                                            min=0,
-                                                                            max=100,
-                                                                            value=65,
-                                                                            tooltip={"placement": "right"},
-                                                                            included=False
-                                                                        ),
-                                                                    ],
-                                                                    style={'display': 'none'}
-                                                                ),
-                                                                html.Div(
-                                                                    id='x2_slider-container',
-                                                                    children=[
-                                                                        dcc.Slider(
-                                                                            id='x2_slider',
-                                                                            min=0,
-                                                                            max=100,
-                                                                            value=0,
-                                                                            tooltip={"placement": "right"},
-                                                                            included=False
-                                                                        ),
-                                                                    ],
-                                                                    style={'display': 'none'}
-                                                                ),
-                                                                html.Div(
-                                                                    id='x3_slider-container',
-                                                                    children=[
-                                                                        dcc.Slider(
-                                                                            id='x3_slider',
-                                                                            min=0,
-                                                                            max=100,
-                                                                            value=0,
-                                                                            tooltip={"placement": "right"},
-                                                                            included=False
-                                                                        ),
-                                                                    ],
-                                                                    style={'display': 'none'}
-                                                                ),
-                                                                html.Div(
-                                                                    id='table-container',
-                                                                    children=[
-                                                                        dash_table.DataTable(
-                                                                            id='guess-modified',
-                                                                            data=None,
-                                                                            columns=None
-                                                                        ),
-                                                                    ],
-                                                                    style={'display': 'none'}
-                                                                ),
-                                                            ],
-                                                            style={
-                                                                'padding': 10,
-                                                                'flex': 1,
-                                                                "width": "100%",
-                                                                'backgroundColor': 'white'
-                                                            }
+                                                        html.Br(),
+                                                        # Table menu ###
+                                                        dash_table.DataTable(
+                                                            id='option-menu',
+                                                            editable=True,
+                                                            css=[{'selector': '.Select-menu-outer',
+                                                                  'rule': 'display: block !important'}]
                                                         ),
-                                                    ]
-                                                ),
-                                            ]
-                                        ),
-                                    ]
-                                ),
-                            ]
-                        ),
-                        dmc.Col(
-                            span=12,
-                            xl=12,
-                            children=[
-                                dmc.Paper(
-                                    p=8,
-                                    m=4,
-                                    withBorder=True,
-                                    children=[
-                                        create_title_with_info_hover('ERC Graph', info_texts),
-                                        dmc.Grid(
-                                            align='stretch',
-                                            gutter='xs',
-                                            children=[
-                                                dmc.Col(
-                                                    span=12,
-                                                    xl=11,
-                                                    children=[
-                                                        html.Div(
-                                                            children=[
-                                                                dmc.Col(
-                                                                    span=12,
-                                                                    xl=6,
-                                                                    children=[
-                                                                        dcc.Loading(
-                                                                            id="loading-1",
-                                                                            children=[
-                                                                                dcc.Graph(
-                                                                                    id='ERC-graph',
-                                                                                    style=dict(display='none')
-                                                                                ),
-                                                                            ],
-                                                                            type="circle"
-                                                                        ),
-                                                                    ]
-                                                                ),
-                                                            ],
-                                                            style={
-                                                                'padding': 10,
-                                                                'flex': 1,
-                                                                "width": "100%",
-                                                                'backgroundColor': 'white'
-                                                            }
-                                                        ),
-                                                    ]
+                                                    ],
+                                                    style={
+                                                        'padding': 10,
+                                                        'flex': 1,
+                                                        "width": "100%",
+                                                        "height": "100%",
+                                                    }
                                                 ),
                                             ]
                                         ),
@@ -406,14 +107,353 @@ app.layout = html.Div(
                 ),
             ]
         ),
+        dmc.Grid(
+            align='stretch',
+            gutter=0,
+            children=[
+                dmc.Col(
+                    span=12,
+                    xl=6,
+                    styles={"height": "100%"},
+                    children=[
+                        dmc.Paper(
+                            p=8,
+                            m=4,
+                            withBorder=True,
+                            styles={"height": "100%"},
+                            children=[
+                                create_title_with_info_hover('Initial Guess', info_texts),
+                                dmc.Grid(
+                                    align='stretch',
+                                    gutter='xs',
+                                    children=[
+                                        html.Div(
+                                            children=[
+                                                html.Div(
+                                                    id='radio-container',
+                                                    children=[
+                                                        dcc.RadioItems(
+                                                            id='radio-guess',
+                                                            inline=True
+                                                        ),
+                                                        html.Br(),
+                                                        html.Div(
+                                                            children=[
+                                                                html.Div(
+                                                                    id='order-container',
+                                                                    children=[
+                                                                        html.I("Order of the Model"),
+                                                                        html.Br(),
+                                                                        dcc.Input(
+                                                                            id="input-order",
+                                                                            type="number",
+                                                                            value=2.1,
+                                                                            min=1,
+                                                                            max=10,
+                                                                            placeholder="",
+                                                                            style={
+                                                                                'marginRight': '10px'}
+                                                                        ),
+                                                                    ],
+                                                                ),
+                                                                html.Div(
+                                                                    id='mu-container',
+                                                                    children=[
+                                                                        html.I("Mu"),
+                                                                        html.Br(),
+                                                                        dcc.Input(
+                                                                            id="input-mu",
+                                                                            type="number",
+                                                                            value=1.38,
+                                                                            min=1e-6,
+                                                                            max=1e6,
+                                                                            placeholder="",
+                                                                            style={
+                                                                                'marginRight': '10px'}
+                                                                        ),
+                                                                    ],
+                                                                ),
+                                                            ],
+                                                            style={
+                                                                'display': 'flex',
+                                                                'flex-direction': 'row'
+                                                            }
+                                                        ),
+                                                    ],
+                                                    style={'display': 'none'}
+                                                ),
+                                                html.Div(
+                                                    children=[
+                                                        html.Div(
+                                                            id='k1_slider-container',
+                                                            children=[
+                                                                dcc.Slider(
+                                                                    id='k1_slider',
+                                                                    marks={
+                                                                        0: {'label': '0'},
+                                                                        0.99: {'label': 'K1'}
+                                                                    },
+                                                                    tooltip={"placement": "right"},
+                                                                    min=0,
+                                                                    max=0.99,
+                                                                    value=0.5,
+                                                                    included=False,
+                                                                    vertical=True
+                                                                ),
+                                                            ],
+                                                            style={'display': 'none'}
+                                                        ),
+                                                        html.Div(
+                                                            id='k2_slider-container',
+                                                            children=[
+                                                                dcc.Slider(
+                                                                    id='k2_slider',
+                                                                    marks={
+                                                                        0: {'label': '0'},
+                                                                        0.99: {'label': 'K2'}
+                                                                    },
+                                                                    tooltip={"placement": "right"},
+                                                                    min=0,
+                                                                    max=0.99,
+                                                                    value=0.1,
+                                                                    included=False,
+                                                                    vertical=True
+                                                                ),
+                                                            ],
+                                                            style={'display': 'none'}
+                                                        ),
+                                                        dcc.Graph(
+                                                            id='guess-graph',
+                                                            style={'display': 'none', 'width': '90vh'},
+                                                        ),
+                                                    ],
+                                                    style={'display': 'flex', 'flex-direction': 'row'}
+                                                ),
+                                                html.Div(
+                                                    id='x1_slider-container',
+                                                    children=[
+                                                        dcc.Slider(
+                                                            id='x1_slider',
+                                                            min=0,
+                                                            max=100,
+                                                            value=65,
+                                                            tooltip={"placement": "right"},
+                                                            included=False
+                                                        ),
+                                                    ],
+                                                    style={'display': 'none',
+                                                           'align-items': 'center', }
+                                                ),
+                                                html.Div(
+                                                    id='x2_slider-container',
+                                                    children=[
+                                                        dcc.Slider(
+                                                            id='x2_slider',
+                                                            min=0,
+                                                            max=100,
+                                                            value=0,
+                                                            tooltip={"placement": "right"},
+                                                            included=False
+                                                        ),
+                                                    ],
+                                                    style={'display': 'none',
+                                                           'align-items': 'center', }
+                                                ),
+                                                html.Div(
+                                                    id='x3_slider-container',
+                                                    children=[
+                                                        dcc.Slider(
+                                                            id='x3_slider',
+                                                            min=0,
+                                                            max=100,
+                                                            value=0,
+                                                            tooltip={"placement": "right"},
+                                                            included=False
+                                                        ),
+                                                    ],
+                                                    style={'width': '100%', 'display': 'flex', 'align-items': 'center',
+                                                           'justify-content': 'center'}
+                                                ),
+                                                html.Div(
+                                                    id='table-container',
+                                                    children=[
+                                                        dash_table.DataTable(
+                                                            id='guess-modified',
+                                                            data=None,
+                                                            columns=None
+                                                        ),
+                                                    ],
+                                                    style={'display': 'none'}
+                                                ),
+                                            ],
+                                            style={
+                                                'padding': 10,
+                                                'flex': 1,
+                                                "width": "100%",
+                                                "height": "100%",
+                                                'backgroundColor': 'white'
+                                            }
+                                        ),
+                                    ]
+                                ),
+                            ]
+                        ),
+                    ],
+                ),
+                dmc.Col(
+                    span=12,
+                    xl=6,
+                    styles={"height": "100%"},
+                    children=[
+                        dmc.Paper(
+                            p=8,
+                            m=4,
+                            withBorder=True,
+                            styles={"height": "100%"},
+                            children=[
+                                create_title_with_info_hover('Fitted Profiles', info_texts),
+                                dmc.Grid(
+                                    align='stretch',
+                                    gutter='xs',
+                                    children=[
+                                        dmc.Col(
+                                            span=12,
+                                            xl=9,
+                                        ),
+                                        dmc.Col(
+                                            span=12,
+                                            xl=3,
+                                            children=[
+                                                html.Button("Download as xlxs", id="btn_csv_fitted_params"),
+                                                dcc.Download(id="download_profile_data"),
+                                            ]
+                                        ),
+                                    ]
+                                ),
+                                dmc.Grid(
+                                    align='stretch',
+                                    gutter='xs',
+                                    children=[
+                                        dmc.Col(
+                                            span=12,
+                                            xl=11,
+                                            children=[
+                                                html.Div(
+                                                    children=[
+                                                        dcc.Loading(
+                                                            id="loading-1",
+                                                            children=[
+                                                                dcc.Graph(
+                                                                    id='fit-graph',
+                                                                    style=dict(display='none')
+                                                                )
+                                                            ],
+                                                            type="circle"
+                                                        ),
+                                                    ],
+                                                    style={
+                                                        'padding': 10,
+                                                        'flex': 1,
+                                                        "width": "100%",
+                                                        "height": "100%",
+                                                        'backgroundColor': 'white'
+                                                    }
+                                                ),
+                                            ]
+                                        ),
+                                    ]
+                                ),
+                            ]
+                        ),
+                    ]
+                ),
+            ],
+        ),
+        dmc.Grid(
+            align='stretch',
+            gutter=0,
+            children=[
+                dmc.Col(
+                    span=12,
+                    xl=12,
+                    children=[
+                        dmc.Paper(
+                            p=8,
+                            m=4,
+                            withBorder=True,
+                            children=[
+                                create_title_with_info_hover('ERC Graph', info_texts),
+                                dmc.Grid(
+                                    align='stretch',
+                                    gutter='xs',
+                                    children=[
+                                        dmc.Col(
+                                            span=12,
+                                            xl=9,
+                                        ),
+                                        dmc.Col(
+                                            span=12,
+                                            xl=3,
+                                            children=[
+                                                html.Button("Download as xlsx", id="btn_csv_erc"),
+                                                dcc.Download(id="download_erc"),
+                                            ]
+                                        ),
+                                    ]
+                                ),
+                                dmc.Grid(
+                                    align='stretch',
+                                    gutter='xs',
+                                    children=[
+                                        dmc.Col(
+                                            span=12,
+                                            xl=11,
+                                            children=[
+                                                html.Div(
+                                                    children=[
+                                                        dmc.Col(
+                                                            span=12,
+                                                            xl=12,
+                                                            children=[
+                                                                dcc.Loading(
+                                                                    id="loading-1",
+                                                                    children=[
+                                                                        dcc.Graph(
+                                                                            id='ERC-graph',
+                                                                            style=dict(display='none')
+                                                                        ),
+                                                                    ],
+                                                                    type="circle"
+                                                                ),
+                                                            ]
+                                                        ),
+                                                    ],
+                                                    style={
+                                                        'padding': 10,
+                                                        'flex': 1,
+                                                        "width": "100%",
+                                                        'backgroundColor': 'white'
+                                                    }
+                                                ),
+                                            ]
+                                        ),
+                                    ]
+                                ),
+                            ]
+                        ),
+                    ]
+                ),
+            ]
+        ),
+        dcc.Store(id='fitted_memory'),
+        dcc.Store(id='erc_memory'),
     ],
 )
 
 
 # #-----------------------------------------------#
 # #              Define the Callbacks             #
-# #-----------------------------------------------#  
-
+# #-----------------------------------------------#
 
 @app.callback(
     Output('upload-text-output', 'children'),
@@ -744,11 +784,14 @@ def adapt_slider_visibility(sheet, menu_data, selected_sheets, menu_col):
 
             if model_idx > 0:
                 # Exp + Bur or more
-                xp1_style = {
-                    'display': 'block',
-                    'height': '50px',
-                    'width': '500px'
-                }
+                xp1_style = {'display': 'block',
+                             'height': '50px',
+                             'width': '500px',
+                             "text-align": "center",
+                             'align-items': 'center',
+                             'justify-content': 'center'
+                             }
+
             if model_idx > 1:
                 # Exp + Bur or more
                 k1_style = {'display': 'block',
@@ -759,7 +802,11 @@ def adapt_slider_visibility(sheet, menu_data, selected_sheets, menu_col):
                 # Exp + Bur or more
                 xp2_style = {'display': 'block',
                              'height': '50px',
-                             'width': '500px'}
+                             'width': '500px',
+                             "text-align": "center",
+                             'align-items': 'center',
+                             'justify-content': 'center'
+                             }
 
             if model_idx > 3:
                 # Exp + Bur or more
@@ -771,7 +818,11 @@ def adapt_slider_visibility(sheet, menu_data, selected_sheets, menu_col):
                 # Exp + Bur or more
                 xp3_style = {'display': 'block',
                              'height': '50px',
-                             'width': '500px'}
+                             'width': '500px',
+                             "text-align": "center",
+                             'align-items': 'center',
+                             'justify-content': 'center'
+                             }
 
     return xp1_style, xp2_style, xp3_style, k1_style, k2_style, mu_style
 
@@ -960,11 +1011,13 @@ def create_guess_fig(rows_guess, columns_guess, rows_menu,
         # y_guess_temp = FIT.fun(xi,i,model_idx[i],*FIT.P0)
         #     # plt.plot(xi, y_guess_temp, color = 'green', label='Guess')
 
-        layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)',
-                           plot_bgcolor='rgba(0,0,0,0)',
-                           title="Initial Guess",
-                           height=700,
-                           width=700)
+        layout = go.Layout(
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            # title="Initial Guess",
+            # height=700,
+            # width=700,
+        )
 
         fig = go.Figure(data=plot_content,
                         layout=layout)
@@ -1010,6 +1063,8 @@ def convert_params_to_guess(df_params):
     Output('fit-graph', 'style'),
     Output('ERC-graph', 'figure'),
     Output('ERC-graph', 'style'),
+    Output("fitted_memory", "data"),
+    Output("erc_memory", "data"),
     Input('guess-modified', 'data'),
     Input('option-menu', 'data'),
     State('guess-modified', 'columns'),
@@ -1027,6 +1082,9 @@ def create_mem(rows_guess, rows_menu, columns_guess, columns_menu,
     ))
     graph_style_fit = dict(display='none')
     graph_style_erc = dict(display='none')
+
+    fit_params = pd.DataFrame()
+    erc_params = pd.DataFrame()
 
     if rows_guess and rows_menu:
 
@@ -1146,7 +1204,40 @@ def create_mem(rows_guess, rows_menu, columns_guess, columns_menu,
         fig_fit.update_layout(height=700, width=700)
         figure_erc.update_layout(height=700, width=700)
 
-    return fig_fit, graph_style_fit, figure_erc, graph_style_erc
+        fit_params = FIT.params_df
+        erc_params = FIT.erc_df
+
+    return fig_fit, graph_style_fit, figure_erc, graph_style_erc, fit_params.to_json(), erc_params.to_json()
+
+
+@app.callback(
+    Output('download_profile_data', 'data'),
+    Input('btn_csv_fitted_params', 'n_clicks'),
+    State("fitted_memory", "data"),
+)
+def filter_countries(_, data_json):
+
+    if data_json is None:
+        raise PreventUpdate
+
+    data = pd.read_json(data_json)
+
+    return dcc.send_data_frame(data.to_excel, "Fitted_Parameters.xlsx")
+
+
+@app.callback(
+    Output('download_erc', 'data'),
+    Input('btn_csv_erc', 'n_clicks'),
+    State("erc_memory", "data"),
+)
+def filter_countries(_, data_json):
+
+    if data_json is None:
+        raise PreventUpdate
+
+    data = pd.read_json(data_json)
+
+    return dcc.send_data_frame(data.to_excel, "ERC_Parameters.xlsx")
 
 
 if __name__ == '__main__':
