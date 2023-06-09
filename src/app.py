@@ -2,6 +2,8 @@ import base64
 import io
 import dash
 from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
+from dash import callback_context, no_update
 import dash_mantine_components as dmc
 import dash_bootstrap_components as dbc
 from dash import dcc, html, dash_table
@@ -199,7 +201,8 @@ app.layout = html.Div(
                                                                     vertical=True
                                                                 ),
                                                             ],
-                                                            style={'display': 'none'}),
+                                                            style={'display': 'none'}
+                                                        ),
                                                         html.Div(
                                                             id='k2_slider-container',
                                                             children=[
@@ -238,7 +241,8 @@ app.layout = html.Div(
                                                             included=False
                                                         ),
                                                     ],
-                                                    style={'display': 'none'}
+                                                    style={'display': 'none',
+                                                           'align-items': 'center', }
                                                 ),
                                                 html.Div(
                                                     id='x2_slider-container',
@@ -252,7 +256,8 @@ app.layout = html.Div(
                                                             included=False
                                                         ),
                                                     ],
-                                                    style={'display': 'none'}
+                                                    style={'display': 'none',
+                                                           'align-items': 'center', }
                                                 ),
                                                 html.Div(
                                                     id='x3_slider-container',
@@ -266,7 +271,8 @@ app.layout = html.Div(
                                                             included=False
                                                         ),
                                                     ],
-                                                    style={'display': 'none'}
+                                                    style={'width': '100%', 'display': 'flex', 'align-items': 'center',
+                                                           'justify-content': 'center'}
                                                 ),
                                                 html.Div(
                                                     id='table-container',
@@ -297,13 +303,33 @@ app.layout = html.Div(
                 dmc.Col(
                     span=12,
                     xl=6,
+                    styles={"height": "100%"},
                     children=[
                         dmc.Paper(
                             p=8,
                             m=4,
                             withBorder=True,
+                            styles={"height": "100%"},
                             children=[
                                 create_title_with_info_hover('Fitted Profiles', info_texts),
+                                dmc.Grid(
+                                    align='stretch',
+                                    gutter='xs',
+                                    children=[
+                                        dmc.Col(
+                                            span=12,
+                                            xl=9,
+                                        ),
+                                        dmc.Col(
+                                            span=12,
+                                            xl=3,
+                                            children=[
+                                                html.Button("Download as xlxs", id="btn_csv_fitted_params"),
+                                                dcc.Download(id="download_profile_data"),
+                                            ]
+                                        ),
+                                    ]
+                                ),
                                 dmc.Grid(
                                     align='stretch',
                                     gutter='xs',
@@ -349,7 +375,7 @@ app.layout = html.Div(
             children=[
                 dmc.Col(
                     span=12,
-                    xl=6,
+                    xl=12,
                     children=[
                         dmc.Paper(
                             p=8,
@@ -363,13 +389,31 @@ app.layout = html.Div(
                                     children=[
                                         dmc.Col(
                                             span=12,
+                                            xl=9,
+                                        ),
+                                        dmc.Col(
+                                            span=12,
+                                            xl=3,
+                                            children=[
+                                                html.Button("Download as xlsx", id="btn_csv_erc"),
+                                                dcc.Download(id="download_erc"),
+                                            ]
+                                        ),
+                                    ]
+                                ),
+                                dmc.Grid(
+                                    align='stretch',
+                                    gutter='xs',
+                                    children=[
+                                        dmc.Col(
+                                            span=12,
                                             xl=11,
                                             children=[
                                                 html.Div(
                                                     children=[
                                                         dmc.Col(
                                                             span=12,
-                                                            xl=6,
+                                                            xl=12,
                                                             children=[
                                                                 dcc.Loading(
                                                                     id="loading-1",
@@ -401,14 +445,15 @@ app.layout = html.Div(
                 ),
             ]
         ),
+        dcc.Store(id='fitted_memory'),
+        dcc.Store(id='erc_memory'),
     ],
 )
 
 
 # #-----------------------------------------------#
 # #              Define the Callbacks             #
-# #-----------------------------------------------#  
-
+# #-----------------------------------------------#
 
 @app.callback(
     Output('upload-text-output', 'children'),
@@ -739,11 +784,14 @@ def adapt_slider_visibility(sheet, menu_data, selected_sheets, menu_col):
 
             if model_idx > 0:
                 # Exp + Bur or more
-                xp1_style = {
-                    'display': 'block',
-                    'height': '50px',
-                    'width': '500px'
-                }
+                xp1_style = {'display': 'block',
+                             'height': '50px',
+                             'width': '500px',
+                             "text-align": "center",
+                             'align-items': 'center',
+                             'justify-content': 'center'
+                             }
+
             if model_idx > 1:
                 # Exp + Bur or more
                 k1_style = {'display': 'block',
@@ -754,7 +802,11 @@ def adapt_slider_visibility(sheet, menu_data, selected_sheets, menu_col):
                 # Exp + Bur or more
                 xp2_style = {'display': 'block',
                              'height': '50px',
-                             'width': '500px'}
+                             'width': '500px',
+                             "text-align": "center",
+                             'align-items': 'center',
+                             'justify-content': 'center'
+                             }
 
             if model_idx > 3:
                 # Exp + Bur or more
@@ -766,7 +818,11 @@ def adapt_slider_visibility(sheet, menu_data, selected_sheets, menu_col):
                 # Exp + Bur or more
                 xp3_style = {'display': 'block',
                              'height': '50px',
-                             'width': '500px'}
+                             'width': '500px',
+                             "text-align": "center",
+                             'align-items': 'center',
+                             'justify-content': 'center'
+                             }
 
     return xp1_style, xp2_style, xp3_style, k1_style, k2_style, mu_style
 
@@ -958,7 +1014,7 @@ def create_guess_fig(rows_guess, columns_guess, rows_menu,
         layout = go.Layout(
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
-            title="Initial Guess",
+            # title="Initial Guess",
             # height=700,
             # width=700,
         )
@@ -1007,6 +1063,8 @@ def convert_params_to_guess(df_params):
     Output('fit-graph', 'style'),
     Output('ERC-graph', 'figure'),
     Output('ERC-graph', 'style'),
+    Output("fitted_memory", "data"),
+    Output("erc_memory", "data"),
     Input('guess-modified', 'data'),
     Input('option-menu', 'data'),
     State('guess-modified', 'columns'),
@@ -1024,6 +1082,9 @@ def create_mem(rows_guess, rows_menu, columns_guess, columns_menu,
     ))
     graph_style_fit = dict(display='none')
     graph_style_erc = dict(display='none')
+
+    fit_params = pd.DataFrame()
+    erc_params = pd.DataFrame()
 
     if rows_guess and rows_menu:
 
@@ -1143,7 +1204,40 @@ def create_mem(rows_guess, rows_menu, columns_guess, columns_menu,
         fig_fit.update_layout(height=700, width=700)
         figure_erc.update_layout(height=700, width=700)
 
-    return fig_fit, graph_style_fit, figure_erc, graph_style_erc
+        fit_params = FIT.params_df
+        erc_params = FIT.erc_df
+
+    return fig_fit, graph_style_fit, figure_erc, graph_style_erc, fit_params.to_json(), erc_params.to_json()
+
+
+@app.callback(
+    Output('download_profile_data', 'data'),
+    Input('btn_csv_fitted_params', 'n_clicks'),
+    State("fitted_memory", "data"),
+)
+def filter_countries(_, data_json):
+
+    if data_json is None:
+        raise PreventUpdate
+
+    data = pd.read_json(data_json)
+
+    return dcc.send_data_frame(data.to_excel, "Fitted_Parameters.xlsx")
+
+
+@app.callback(
+    Output('download_erc', 'data'),
+    Input('btn_csv_erc', 'n_clicks'),
+    State("erc_memory", "data"),
+)
+def filter_countries(_, data_json):
+
+    if data_json is None:
+        raise PreventUpdate
+
+    data = pd.read_json(data_json)
+
+    return dcc.send_data_frame(data.to_excel, "ERC_Parameters.xlsx")
 
 
 if __name__ == '__main__':

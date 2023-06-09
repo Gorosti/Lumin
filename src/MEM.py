@@ -206,6 +206,8 @@ class MEM():
         self.x = None
         self.n = None
         self.n_err = None
+        self.params_df = pd.DataFrame()
+        self.erc_df = pd.DataFrame()
 
     def read_data_array(self, sheet_name, weight):
         df_dict = pd.read_excel(self.filepath,
@@ -534,7 +536,7 @@ class MEM():
     def Parameterrresults(self, sheet_name, model_idx):
         Par_fit = []
         Par_fit_err = []
-        Parameters = ('Kinetic order', 'Attenuation coeff (mu)', 'sigma*phi*te1', 'F*tb1', 'sigma*phi*te2', 'F*tb2')
+        Parameters = ['Kinetic order', 'Attenuation coeff (mu)', 'sigma*phi*te1', 'F*tb1', 'sigma*phi*te2', 'F*tb2']
 
         for i in range(0, len(sheet_name)):
             ind = np.searchsorted(self.P, self.idP0(model_idx[i], i))
@@ -545,9 +547,14 @@ class MEM():
         self.Par_fit = Par_fit
         self.Par_fit_err = Par_fit_err
 
+        params_df = pd.DataFrame(index=sheet_name, columns=Parameters)
+
         for i in range(0, len(sheet_name)):  # different samples
             for j in range(0, len(self.Par_fit[i])):  # different fitting parameters
                 print('Sample' + str(i + 1) + ':' + Parameters[j] + '=' + str(self.Par_fit[i][j]))
+                params_df.loc[sheet_name[i], Parameters[j]] = str(self.Par_fit[i][j])
+
+        self.params_df = params_df.fillna('')
 
     def SingleCal(self, sheet_name, model_idx, Known_exp_time1, Known_exp_time2, Known_exp_time3):
         sf_recent = []
@@ -997,7 +1004,7 @@ class MEM():
 
             layout = go.Layout(paper_bgcolor='rgba(0,0,0,0)',
                                plot_bgcolor='rgba(0,0,0,0)',
-                               title="Fitted Curves",
+                               # title="Fitted Curves",
                                xaxis_title="Depth [mm]",
                                yaxis_title="Normalised luminescence signal",
                                height=500,
@@ -1135,6 +1142,20 @@ class MEM():
                     t_ERC.append(list(t_erc))
                 self.t_ERC = t_ERC
                 TIME_ERC.append(t_ERC)
+
+                print('TIME_ERC', TIME_ERC)
+                print('xp all is ', xp_all)
+
+                time = [item for sublist in TIME_ERC[0] for item in sublist]
+
+                self.erc_df = pd.DataFrame(
+                    {
+                        'xp': xp_all,
+                        'Known age': KNOWN_EXP_TIME1,
+                        'Guessed age': time,
+                     },
+                    index=sheet_name
+                )
 
                 # calculate regression confidence interval
                 self.poptCI_ERC = unc.correlated_values(self.poptERC, self.pcovERC)
